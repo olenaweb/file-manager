@@ -3,8 +3,10 @@
  
  npm run start -- --username=your_username
 
+LOOK at branch develop!!!!!
+
 Commands:
- .exit
+ .exit  or Ctrl-C
  up
  rm <file>
  cd <directory>

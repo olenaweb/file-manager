@@ -1,7 +1,7 @@
 # file-manager
  Task is to implement File Manager using Node.js APIs.
  
- npm run start -- --username=your_username
+ npm run start -- --username=Olena
 
 LOOK at branch develop!!!!!
 
@@ -29,6 +29,6 @@ Commands:
  os --architecture
 
  or 
- 
+
  os --cpus --homedir --username --architecture --EOL
 

@@ -10,6 +10,7 @@ try {
     throw null;
   }
 } catch (err) {
+  console.log(err.message);
   exit();
 }
 

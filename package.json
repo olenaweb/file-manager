@@ -5,12 +5,17 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "npm run start -- --username=user"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
     "url": "file-manager"
   },
+  "keywords": [
+    "nodeJS",
+    "cli",
+    "file-manager"
+  ],
   "author": "Olenaweb",
   "license": "ISC"
 }

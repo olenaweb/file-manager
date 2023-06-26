@@ -1,15 +1,8 @@
 import { EOL } from "os";
 import { Transform } from "stream";
 import { env, cwd, exit } from "process";
-import { up, rm, cd } from "./modules/fsCommands.js";
-
-
-// import { compress, decompress } from "./modules/archiveProcessing.js";
-// import { cd, up } from "./modules/moveCommands.js";
-// import { list } from "./modules/listFiles.js";
-// import osInfo from "./modules/osInfo.js";
-// import { calculateHash } from "./modules/hashProcessing.js";
-// import { add, cat, cp, mv, rm, rn } from "./modules/fsCommands.js";
+import { up, rm, cd, ls } from "./modules/fsCommands.js";
+import systemInfo from "./modules/systemInfo.js";
 
 const commandMan = new Transform({
   async transform(chunk, encoding, callback) {
@@ -32,48 +25,48 @@ const commandMan = new Transform({
           await cd(...args);
           break;
         case "ls":
-          await list();
+          await ls(...args);
           break;
         case "os":
-          args.forEach((i) => {
-            osInfo(i);
+          args.forEach((item) => {
+            systemInfo(item);
           });
           break;
-        case "cat":
-          await cat(...args);
-          break;
-        case "add":
-          await add(...args);
-          break;
-        case "rn":
-          await rn(...args);
-          break;
-        case "cp":
-          await cp(...args);
-          break;
-        case "mv":
-          await mv(...args);
-          break;
+        // case "cat":
+        //   await cat(...args);
+        //   break;
+        // case "add":
+        //   await add(...args);
+        //   break;
+        // case "rn":
+        //   await rn(...args);
+        //   break;
+        // case "cp":
+        //   await cp(...args);
+        //   break;
+        // case "mv":
+        //   await mv(...args);
+        //   break;
 
-        case "hash":
-          await calculateHash(...args);
-          break;
-        case "compress":
-          await compress(...args);
-          break;
-        case "decompress":
-          await decompress(...args);
-          break;
+        // case "hash":
+        //   await calculateHash(...args);
+        //   break;
+        // case "compress":
+        //   await compress(...args);
+        //   break;
+        // case "decompress":
+        //   await decompress(...args);
+        //   break;
         default:
           throw new Error(
-            `${EOL} Invalid input: unsupported command: ${command}`
+            `${EOL} Invalid input: wrong command: ${command}`
           );
       }
     } catch (err) {
       console.log("Operation failed: " + err.message);
     }
 
-    console.log(`${EOL}You are currently in ${cwd()}...`);
+    console.log(`${EOL}You are currently in ${cwd()}.`);
     callback();
   },
 });

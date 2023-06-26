@@ -7,8 +7,8 @@ import systemInfo from "./modules/systemInfo.js";
 const commandMan = new Transform({
   async transform(chunk, encoding, callback) {
     const [command, ...args] = chunk.toString().replace(EOL, "").split(" ");
-    console.log('args = ', args);
-    console.log('Yours command = ', command);
+    // console.log('args = ', args);
+    // console.log('Yours command = ', command);
     try {
       switch (command) {
         case ".exit":

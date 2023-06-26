@@ -1,29 +1,28 @@
 import commandMan from "./operations.js";
 import { EOL, homedir } from "os";
-import { env, argv, chdir, cwd, exit } from "process";
-
+import { argv, chdir, cwd, exit } from "process";
+let username = 'user';
 try {
-  env.username = argv.find((item) => item.includes("--username")).split("=")[1];
-  console.log('env.username = ', env.username);
-  if (!env.username) {
-    // throw new Error("Enter your username..." + EOL);
-    throw null;
+  if (argv.length >= 3) {
+    username = argv.find((item) => item.includes("--username")).split("=")[1];
+  }
+  if (!username || username === undefined) {
+    username = 'user';
   }
 } catch (err) {
   console.log(err.message);
-  exit();
 }
 
 chdir(homedir());
 
-console.log(EOL + `Welcome to the File Manager, ${env.username}!` + EOL);
+console.log(EOL + `Welcome to the File Manager, ${username}!` + EOL);
 console.log(`You are currently in ${cwd()}...`);
 process.stdin.pipe(commandMan).pipe(process.stdout);
 
 ["SIGINT", "close"].forEach((item) => {
   process.on(item, () => {
-    console.log(`${EOL}Thank you for using File Manager, ${env.username} , goodby!`);
-    process.exit();
+    console.log(`${EOL}Thank you for using File Manager, ${username} , goodby!`);
+    exit();
   })
 })
 

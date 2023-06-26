@@ -2,7 +2,7 @@ import { getPath } from "./utils.js";
 import { chdir, cwd } from "process";
 import { parse, basename } from "path";
 import { lstat, rename, unlink, writeFile, access, constants, readdir } from "node:fs/promises";
-import { createReadStream, createWriteStream } from "fs";
+import { appendFile, createReadStream, createWriteStream } from "fs";
 import { EOL } from "os";
 
 
@@ -125,3 +125,38 @@ export const rn = async (file1, file2) => {
     }
   }
 };
+
+// CP
+export const cp = async (file1, file2) => {
+  const filename1 = basename(file1);
+  const filename2 = basename(file2);
+
+  const currPath = getPath(filename1);
+  const newFile = getPath(filename2);
+  console.log('currPath = ', currPath);
+  console.log(' newFile= ', newFile);
+  try {
+    const readStream = createReadStream(currPath);
+    const writeStream = createWriteStream(newFile);
+
+    readStream.pipe(writeStream);
+    readStream.on('error', (error) => {
+      console.error('Error reading the source file:', error);
+    });
+
+    writeStream.on('error', (error) => {
+      console.error('Error writing to the destination file:', error);
+    });
+
+    writeStream.on('finish', () => {
+      console.log(EOL + `File ${file1} copied to ${file2}!`);
+    });
+  }
+  catch (err) {
+    if (err.code === 'ENOENT') throw new Error(`*** ${file2} will be created`);
+    console.log(err.message);
+    add(file2);
+    return;
+  }
+};
+

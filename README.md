@@ -7,16 +7,28 @@ LOOK at branch develop!!!!!
 
 Commands:
  .exit  or Ctrl-C
+
  up
+
  rm <file>
+
  cd <directory>
+
  ls <directory>
+
  os commands : 
+
  os --EOL
+
  os --cpus
+
  os --homedir
+
  os --username
+
  os --architecture
+
  or 
+ 
  os --cpus --homedir --username --architecture --EOL
 

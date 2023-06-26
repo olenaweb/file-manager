@@ -1,10 +1,10 @@
 import { getPath } from "./utils.js";
 import { chdir, cwd } from "process";
 import { parse, basename } from "path";
-import { lstat, rename, unlink } from "fs/promises";
-import { access, constants, readdir } from 'node:fs/promises';
+import { lstat, rename, unlink, writeFile, access, constants, readdir } from "node:fs/promises";
 import { createReadStream, createWriteStream } from "fs";
 import { EOL } from "os";
+
 
 // import { lstat } from "fs/promises";
 
@@ -78,3 +78,50 @@ export const cat = async (file) => {
 
 };
 
+//ADD
+
+export const add = async (file) => {
+  const filename = basename(file);
+  const src = getPath(filename);
+  const existMsg = 'FS operation failed';
+  try {
+    await access(src);
+    throw new Error(existMsg);
+  } catch (err) {
+    try {
+      if (err.message === existMsg) {
+        throw new Error(err);
+      }
+      const string = '';
+      await writeFile(src, string)
+      console.log(`${file} have been created`);
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  }
+};
+
+// RN
+export const rn = async (file1, file2) => {
+  const filename1 = basename(file1);
+  const filename2 = basename(file2);
+
+  const name = getPath(filename2);
+  const wrongName = getPath(filename1);
+
+  const existMsg = 'FS operation failed';
+  try {
+    await access(name);
+    throw new Error(existMsg);
+  } catch (e) {
+    try {
+      if (e.message === existMsg) {
+        throw new Error(e);
+      }
+      await rename(wrongName, name);
+      console.log(`${file1} renamed to ${file2}`);
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+};

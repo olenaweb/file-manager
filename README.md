@@ -32,3 +32,10 @@ Commands:
 
  os --cpus --homedir --username --architecture --EOL
 
+ cat <file>
+
+ add <file>
+
+ rn <orig-file> <copy-file>
+ 
+ cp <orig-file> <copy-file>

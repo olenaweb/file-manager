@@ -3,9 +3,9 @@ import { chdir, cwd } from "process";
 import { parse, basename } from "path";
 import { lstat, rename, unlink } from "fs/promises";
 import { access, constants, readdir } from 'node:fs/promises';
+import { createReadStream, createWriteStream } from "fs";
+import { EOL } from "os";
 
-// import { createReadStream, createWriteStream } from "fs";
-// import { EOL } from "os";
 // import { lstat } from "fs/promises";
 
 // UP
@@ -64,3 +64,17 @@ export const ls = async (path = "") => {
   await listAll(pathDir);
 
 };
+
+// CAT
+export const cat = async (file) => {
+  const filename = basename(file);
+
+  const readStream = createReadStream(getPath(filename), 'utf-8');
+  readStream.on('data', (data) => {
+    process.stdout.write(data + EOL + "> end of file, input yours command" + EOL);
+  })
+
+  readStream.on("error", (err) => console.log(err.message));
+
+};
+

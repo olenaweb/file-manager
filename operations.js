@@ -1,7 +1,7 @@
 import { EOL } from "os";
 import { Transform } from "stream";
 import { env, cwd, exit } from "process";
-import { up, rm, cd, ls } from "./modules/fsCommands.js";
+import { up, rm, cd, ls, cat } from "./modules/fsCommands.js";
 import systemInfo from "./modules/systemInfo.js";
 
 const commandMan = new Transform({
@@ -32,9 +32,9 @@ const commandMan = new Transform({
             systemInfo(item);
           });
           break;
-        // case "cat":
-        //   await cat(...args);
-        //   break;
+        case "cat":
+          await cat(...args);
+          break;
         // case "add":
         //   await add(...args);
         //   break;

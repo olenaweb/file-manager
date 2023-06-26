@@ -1,0 +1,16 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "Task is to implement File Manager using Node.js APIs.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "npm run start -- --username=user"
+  },
+  "repository": {
+    "type": "git",
+    "url": "file-manager"
+  },
+  "author": "Olenaweb",
+  "license": "ISC"
+}

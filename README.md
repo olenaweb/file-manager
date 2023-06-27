@@ -6,15 +6,16 @@
 LOOK at branch develop!!!!!
 
 Commands:
+
  .exit  or Ctrl-C
 
  up
 
- rm <file>
+ rm file
 
- cd <directory>
+ cd directory
 
- ls <directory>
+ ls directory
 
  os commands : 
 
@@ -32,12 +33,12 @@ Commands:
 
  os --cpus --homedir --username --architecture --EOL
 
- cat <file>
+ cat file
 
- add <file>
+ add file
 
- rn <orig-file> <copy-file>
+ rn orig-file copy-file
 
- cp <orig-file> <copy-file>
+ cp orig-file copy-file
 
- mv <orig-file> <copy-file>
+ mv orig-file copy-file

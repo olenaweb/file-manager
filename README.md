@@ -37,5 +37,7 @@ Commands:
  add <file>
 
  rn <orig-file> <copy-file>
- 
+
  cp <orig-file> <copy-file>
+
+ mv <orig-file> <copy-file>

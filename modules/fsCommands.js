@@ -133,8 +133,6 @@ export const cp = async (file1, file2) => {
 
   const currPath = getPath(filename1);
   const newFile = getPath(filename2);
-  console.log('currPath = ', currPath);
-  console.log(' newFile= ', newFile);
   try {
     const readStream = createReadStream(currPath);
     const writeStream = createWriteStream(newFile);
@@ -150,6 +148,39 @@ export const cp = async (file1, file2) => {
 
     writeStream.on('finish', () => {
       console.log(EOL + `File ${file1} copied to ${file2}!`);
+    });
+  }
+  catch (err) {
+    if (err.code === 'ENOENT') throw new Error(`*** ${file2} will be created`);
+    console.log(err.message);
+    add(file2);
+    return;
+  }
+};
+
+// MV
+export const mv = async (file1, file2) => {
+  const filename1 = basename(file1);
+  const filename2 = basename(file2);
+
+  const currPath = getPath(filename1);
+  const newFile = getPath(filename2);
+  try {
+    const readStream = createReadStream(currPath);
+    const writeStream = createWriteStream(newFile);
+
+    readStream.pipe(writeStream);
+    readStream.on('error', (error) => {
+      console.error('Error reading the source file:', error);
+    });
+
+    writeStream.on('error', (error) => {
+      console.error('Error writing to the destination file:', error);
+    });
+
+    writeStream.on('finish', () => {
+      console.log(EOL + `File ${file1} movied to ${file2}!`);
+      rm(file1);
     });
   }
   catch (err) {

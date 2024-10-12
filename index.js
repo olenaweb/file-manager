@@ -1,7 +1,7 @@
 import commandMan from "./operations.js";
 import { EOL, homedir } from "os";
 import { argv, chdir, cwd, exit } from "process";
-let username = 'user';
+let username;
 try {
   if (argv.length >= 3) {
     username = argv.find((item) => item.includes("--username")).split("=")[1];
@@ -16,7 +16,8 @@ try {
 chdir(homedir());
 
 console.log(EOL + `Welcome to the File Manager, ${username}!` + EOL);
-console.log(`You are currently in ${cwd()}...`);
+console.log(`***You are currently in ${cwd()}...`);
+process.stdout.write(EOL + "> ");
 process.stdin.pipe(commandMan).pipe(process.stdout);
 
 ["SIGINT", "close"].forEach((item) => {

@@ -66,7 +66,9 @@ const commandMan = new Transform({
       console.log("Operation failed: " + err.message);
     }
 
-    console.log(`${EOL}You are currently in ${cwd()}.`);
+    console.log(`${EOL}You are currently in ${cwd()}`);
+    process.stdout.write(EOL + "> ");
+
     callback();
   },
 });

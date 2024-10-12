@@ -56,9 +56,25 @@ export const ls = async (path = "") => {
   }
 
   async function listAll(dir) {
-    for (let file of await readdir(dir, { withFileTypes: true })) {
-      console.log(`${file.name}`);
+    const files = await readdir(dir, { withFileTypes: true }); // fs.Dirent
+    const directories = [];
+    const regularFiles = [];
+
+    for (let file of files) {
+      if (file.isDirectory()) {
+        directories.push({ Name: file.name, Type: 'directory' });
+      } else {
+        regularFiles.push({ Name: file.name, Type: 'file' });
+      }
     }
+
+    directories.sort((a, b) => a.Name.localeCompare(b.Name));
+    regularFiles.sort((a, b) => a.Name.localeCompare(b.Name));
+
+    const sortedFiles = [...directories, ...regularFiles];
+
+    // Tabular output
+    console.table(sortedFiles);
   }
 
   await listAll(pathDir);
@@ -71,7 +87,7 @@ export const cat = async (file) => {
 
   const readStream = createReadStream(getPath(filename), 'utf-8');
   readStream.on('data', (data) => {
-    process.stdout.write(data + EOL + "> end of file, input yours command" + EOL);
+    process.stdout.write(data + EOL + "> end of file, input next command" + EOL + ">");
   })
 
   readStream.on("error", (err) => console.log(err.message));
@@ -153,8 +169,8 @@ export const cp = async (file1, file2) => {
   catch (err) {
     if (err.code === 'ENOENT') throw new Error(`*** ${file2} will be created`);
     console.log(err.message);
-    add(file2);
-    return;
+    // add(file2);
+    // return;
   }
 };
 

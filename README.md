@@ -1,13 +1,19 @@
-# file-manager
+# File-manager
  Task is to implement File Manager using Node.js APIs.
  
- npm run start -- --username=Olena
+ ##### for Powershell or Bash or Cmd
+ npm run start -- -- --username=YourName 
 
-LOOK at branch develop!!!!!
+ ##### for Bash or Cmd
+ npm run start -- --username=YourName  
 
-Commands:
+##### LOOK at branch develop!!!!!
+
+#### Commands:
 
  .exit  or Ctrl-C
+
+ ##### Navigation & working directory
 
  up
 

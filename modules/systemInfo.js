@@ -1,4 +1,7 @@
 import { userInfo, arch, cpus, EOL, homedir, } from "os";
+// import cores from "os";
+
+
 
 const systemInfo = (repl) => {
   switch (repl) {
@@ -7,6 +10,7 @@ const systemInfo = (repl) => {
       break;
     case "--cpus":
       const processor = cpus();
+      // const processor = cores.cpus();
       console.log(`${EOL} ${processor.length} - ${processor[0].model}`);
       break;
     case "--homedir":

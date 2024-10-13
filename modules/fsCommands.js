@@ -1,10 +1,9 @@
-import { getPath } from "./utils.js";
 import { chdir, cwd } from "process";
 import { parse, basename, dirname, join } from "path";
 import { lstat, rename, unlink, writeFile, access, constants, readdir } from "node:fs/promises";
 import { appendFile, createReadStream, createWriteStream } from "fs";
 import { EOL } from "os";
-import { checkFile } from "./utils.js";
+import { checkFile, getPath } from "./utils.js";
 
 
 // import { lstat } from "fs/promises";
@@ -170,7 +169,7 @@ export const cp = async (file1, dir2) => {
     });
 
     writeStream.on('error', (error) => {
-      console.error(`Error writing to the destination file ${sourceFile}` + error.message);
+      console.error(`Error writing to the destination file ${targetFile}` + error.message);
     });
 
     writeStream.on('finish', () => {
@@ -184,35 +183,47 @@ export const cp = async (file1, dir2) => {
 
 // MV
 // mv path_to_file path_to_new_directory
-export const mv = async (file1, file2) => {
-  const filename1 = basename(file1);
-  const filename2 = basename(file2);
+export const mv = async (file1, dir2) => {
+  const sourceFile = getPath(file1);
+  let isFileExists = await checkFile(sourceFile);
+  if (!isFileExists) {
+    throw new Error(`*** FS operation failed. This file ${sourceFile} not exists`);
+  }
 
-  const currPath = getPath(filename1);
-  const newFile = getPath(filename2);
+  isFileExists = await checkFile(dir2);
+  if (!isFileExists) {
+    throw new Error(`*** FS operation failed. This directory ${dir2} not exists`);
+  }
+
+  const fullDir2 = getPath(dir2);
+  const filename2 = basename(file1);
+  const targetFile = join(fullDir2, filename2);
+
   try {
-    const readStream = createReadStream(currPath);
-    const writeStream = createWriteStream(newFile);
+    const readStream = createReadStream(sourceFile);
+    const writeStream = createWriteStream(targetFile);
 
     readStream.pipe(writeStream);
+
     readStream.on('error', (error) => {
-      console.error('Error reading the source file:', error);
+      console.error(`Error reading the source file ${sourceFile} ` + error.message);
     });
 
     writeStream.on('error', (error) => {
-      console.error('Error writing to the destination file:', error);
+      console.error(`Error writing to the destination file ${targetFile}` + error.message);
     });
 
-    writeStream.on('finish', () => {
-      console.log(EOL + `File ${file1} movied to ${file2}!`);
-      rm(file1);
+    // waiting for the recording to complete and writeStream to close
+    writeStream.on('close', async () => {
+      process.stdout.write(EOL + `File ${sourceFile} moved to ${targetFile}` + EOL + "> ");
+      // Deleting the original file
+      try {
+        await unlink(sourceFile);
+      } catch (err) {
+        console.error(`*** FS operation failed. Unable to delete file ${sourceFile}: ${err.message}`);
+      }
     });
-  }
-  catch (err) {
-    if (err.code === 'ENOENT') throw new Error(`*** ${file2} will be created`);
-    console.log(err.message);
-    add(file2);
-    return;
+  } catch (err) {
+    console.log('*** FS operation failed. ' + err.message);
   }
 };
-

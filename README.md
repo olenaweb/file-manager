@@ -17,13 +17,23 @@
 
  up
 
- rm file
+ rm path_to_file
 
- cd directory
+ cd path_to_directory
 
  ls directory
 
- os commands : 
+ cat path_to_file
+
+ add new_file_name
+
+ rn path_to_file new_filename
+
+ cp path_to_file path_to_new_directory
+
+ mv path_to_file path_to_new_directory
+
+ ##### os commands : 
 
  os --EOL
 
@@ -38,13 +48,13 @@
  or 
 
  os --cpus --homedir --username --architecture --EOL
+ ##### Hash calculation
+ 
+ hash path_to_file
 
- cat file
+ ##### Compress and decompress operations
+ 
+ compress path_to_file path_to_destination
 
- add file
+ decompress path_to_file path_to_destination
 
- rn orig-file copy-file
-
- cp orig-file copy-file
-
- mv orig-file copy-file

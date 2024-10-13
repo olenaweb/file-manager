@@ -1,9 +1,10 @@
 import { getPath } from "./utils.js";
 import { chdir, cwd } from "process";
-import { parse, basename } from "path";
+import { parse, basename, dirname, join } from "path";
 import { lstat, rename, unlink, writeFile, access, constants, readdir } from "node:fs/promises";
 import { appendFile, createReadStream, createWriteStream } from "fs";
 import { EOL } from "os";
+import { checkFile } from "./utils.js";
 
 
 // import { lstat } from "fs/promises";
@@ -17,13 +18,16 @@ export const up = () => {
 };
 // RM
 export const rm = async (file) => {
-  const filename = basename(file);
+  let isFileExists = await checkFile(file);
+  if (!isFileExists) {
+    throw new Error(`*** FS operation failed. Not a such file : ${file}`);
+  }
   try {
-    await unlink(getPath(filename));
+    await unlink(getPath(file));
     console.log(`*** file ${file} has been removed`);
   }
-  catch {
-    throw new Error(`*** FS operation failed. Not a such file ${file}`);
+  catch (err) {
+    throw new Error(`*** FS operation failed with ${file} ` + err.message);
   }
 };
 // CD
@@ -51,8 +55,6 @@ export const ls = async (path = "") => {
   }
   catch (err) {
     if (err.code === 'ENOENT') throw new Error(`*** FS operation failed. Not a such directory : ${pathDir}`);
-    console.log(err.message);
-    return;
   }
 
   async function listAll(dir) {
@@ -83,98 +85,105 @@ export const ls = async (path = "") => {
 
 // CAT
 export const cat = async (file) => {
-  const filename = basename(file);
+  let isFileExists = await checkFile(file);
+  if (!isFileExists) {
+    throw new Error(`*** FS operation failed. Not a such file : ${file}`);
+  }
 
-  const readStream = createReadStream(getPath(filename), 'utf-8');
+  const readStream = createReadStream(getPath(file), 'utf-8');
   readStream.on('data', (data) => {
     process.stdout.write(data + EOL + "> end of file, input next command" + EOL + ">");
   })
 
-  readStream.on("error", (err) => console.log(err.message));
+  readStream.on("error", (err) => console.log('*** FS operation failed. ' + err.message));
 
 };
 
 //ADD
 
 export const add = async (file) => {
-  const filename = basename(file);
-  const src = getPath(filename);
-  const existMsg = 'FS operation failed';
+  const pathFile = getPath(file);
+  let isFileExists = await checkFile(pathFile);
+  if (isFileExists) {
+    throw new Error(`*** FS operation failed. This file ${pathFile} exists`);
+  }
+
   try {
-    await access(src);
-    throw new Error(existMsg);
-  } catch (err) {
-    try {
-      if (err.message === existMsg) {
-        throw new Error(err);
-      }
-      const string = '';
-      await writeFile(src, string)
-      console.log(`${file} have been created`);
-    } catch (e) {
-      throw new Error(e.message);
-    }
+    const string = '';
+    await writeFile(pathFile, string)
+    console.log(`${pathFile} have been created`);
+  } catch (e) {
+    throw new Error('FS operation failed. ' + e.message);
   }
 };
 
 // RN
+// rn path_to_file new_filename
 export const rn = async (file1, file2) => {
-  const filename1 = basename(file1);
-  const filename2 = basename(file2);
 
-  const name = getPath(filename2);
-  const wrongName = getPath(filename1);
+  const wrongName = getPath(file1);
 
-  const existMsg = 'FS operation failed';
+  const pathFile2 = dirname(wrongName);
+  const nameFile2 = basename(file2);
+  const rightName = join(pathFile2, nameFile2);
+
+  let isFileExists = await checkFile(wrongName);
+  if (!isFileExists) {
+    throw new Error(`*** FS operation failed. Not a such file : ${wrongName}`);
+  }
+  isFileExists = await checkFile(rightName);
+  if (isFileExists) {
+    throw new Error(`*** FS operation failed. That file exists : ${rightName}`);
+  }
   try {
-    await access(name);
-    throw new Error(existMsg);
-  } catch (e) {
-    try {
-      if (e.message === existMsg) {
-        throw new Error(e);
-      }
-      await rename(wrongName, name);
-      console.log(`${file1} renamed to ${file2}`);
-    } catch (err) {
-      throw new Error(err);
-    }
+    await rename(wrongName, rightName);
+    console.log(`${file1} renamed to ${file2}`);
+  } catch (err) {
+    throw new Error('*** FS operation failed.' + err);
   }
 };
 
 // CP
-export const cp = async (file1, file2) => {
-  const filename1 = basename(file1);
-  const filename2 = basename(file2);
+// cp path_to_file path_to_new_directory
+export const cp = async (file1, dir2) => {
+  const sourceFile = getPath(file1);
+  let isFileExists = await checkFile(sourceFile);
+  if (!isFileExists) {
+    throw new Error(`*** FS operation failed. This file ${sourceFile} not exists`);
+  }
 
-  const currPath = getPath(filename1);
-  const newFile = getPath(filename2);
+  isFileExists = await checkFile(dir2);
+  if (!isFileExists) {
+    throw new Error(`*** FS operation failed. This directory ${dir2} not exists`);
+  }
+  const fullDir2 = getPath(dir2);
+  const filename2 = basename(file1);
+  const targetFile = join(fullDir2, filename2);
+
   try {
-    const readStream = createReadStream(currPath);
-    const writeStream = createWriteStream(newFile);
+    const readStream = createReadStream(sourceFile);
+    const writeStream = createWriteStream(targetFile);
 
     readStream.pipe(writeStream);
     readStream.on('error', (error) => {
-      console.error('Error reading the source file:', error);
+      console.error(`Error reading the source file ${sourceFile} ` + error.message);
     });
 
     writeStream.on('error', (error) => {
-      console.error('Error writing to the destination file:', error);
+      console.error(`Error writing to the destination file ${sourceFile}` + error.message);
     });
 
     writeStream.on('finish', () => {
-      console.log(EOL + `File ${file1} copied to ${file2}!`);
+      process.stdout.write(EOL + `File ${sourceFile} copied to ${targetFile}` + EOL + "> ");
     });
   }
   catch (err) {
-    if (err.code === 'ENOENT') throw new Error(`*** ${file2} will be created`);
-    console.log(err.message);
-    // add(file2);
-    // return;
+    console.log('*** FS operation failed. ' + err.message);
   }
 };
 
 // MV
+// mv path_to_file path_to_new_directory
 export const mv = async (file1, file2) => {
   const filename1 = basename(file1);
   const filename2 = basename(file2);

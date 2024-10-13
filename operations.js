@@ -13,7 +13,7 @@ const commandMan = new Transform({
       switch (command) {
         case ".exit":
           console.log(`${EOL}Thank you for using File Manager , ${env.username} , goodby!`);
-          exit();
+          break;
         case "up":
           up();
           break;
@@ -51,9 +51,9 @@ const commandMan = new Transform({
         // case "hash":
         //   await calculateHash(...args);
         //   break;
-        // case "compress":
-        //   await compress(...args);
-        //   break;
+        case "compress":
+          await compress(...args);
+          break;
         // case "decompress":
         //   await decompress(...args);
         //   break;
@@ -63,7 +63,7 @@ const commandMan = new Transform({
           );
       }
     } catch (err) {
-      console.log("Operation failed: " + err.message);
+      console.log(err.message);
     }
 
     console.log(`${EOL}You are currently in ${cwd()}`);

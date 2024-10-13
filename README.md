@@ -48,6 +48,7 @@
  or 
 
  os --cpus --homedir --username --architecture --EOL
+ 
  ##### Hash calculation
  
  hash path_to_file

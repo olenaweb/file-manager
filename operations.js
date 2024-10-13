@@ -1,8 +1,9 @@
 import { EOL } from "os";
 import { Transform } from "stream";
-import { env, cwd, exit } from "process";
+import { env, cwd } from "process";
 import { up, rm, cd, ls, cat, add, rn, cp, mv } from "./modules/fsCommands.js";
 import systemInfo from "./modules/systemInfo.js";
+import { calculateHash } from "./modules/hash.js";
 
 const commandMan = new Transform({
   async transform(chunk, encoding, callback) {
@@ -48,9 +49,9 @@ const commandMan = new Transform({
           await mv(...args);
           break;
 
-        // case "hash":
-        //   await calculateHash(...args);
-        //   break;
+        case "hash":
+          await calculateHash(...args);
+          break;
         case "compress":
           await compress(...args);
           break;

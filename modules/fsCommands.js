@@ -17,16 +17,17 @@ export const up = () => {
 };
 // RM
 export const rm = async (file) => {
-  let isFileExists = await checkFile(file);
+  const pathFile = getPath(file);
+  let isFileExists = await checkFile(pathFile);
   if (!isFileExists) {
-    throw new Error(`*** FS operation failed. Not a such file : ${file}`);
+    throw new Error(`*** FS operation failed. Not a such file : ${pathFile}`);
   }
   try {
-    await unlink(getPath(file));
-    console.log(`*** file ${file} has been removed`);
+    await unlink(pathFile);
+    console.log(`*** file ${pathFile} has been removed`);
   }
   catch (err) {
-    throw new Error(`*** FS operation failed with ${file} ` + err.message);
+    throw new Error(`*** FS operation failed with ${pathFile} ` + err.message);
   }
 };
 // CD
@@ -84,12 +85,13 @@ export const ls = async (path = "") => {
 
 // CAT
 export const cat = async (file) => {
-  let isFileExists = await checkFile(file);
+  const pathFile = getPath(file);
+  let isFileExists = await checkFile(pathFile);
   if (!isFileExists) {
-    throw new Error(`*** FS operation failed. Not a such file : ${file}`);
+    throw new Error(`*** FS operation failed. Not a such file : ${pathFile}`);
   }
 
-  const readStream = createReadStream(getPath(file), 'utf-8');
+  const readStream = createReadStream(getPath(pathFile), 'utf-8');
   readStream.on('data', (data) => {
     process.stdout.write(data + EOL + "> end of file, input next command" + EOL + ">");
   })

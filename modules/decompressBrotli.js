@@ -1,25 +1,29 @@
 import { createReadStream, createWriteStream } from 'fs';
-import { createBrotliDecompress } from 'node:zlib'; // use Brotli
+import { createBrotliDecompress } from 'node:zlib'; // Brotli
 import { pipeline } from 'node:stream';
-import { dirname, basename } from 'path';
+import { dirname } from 'path';
 import { EOL } from "os";
 import { checkFile, getPath } from "./utils.js";
 
-
-// Function for unpacking files
 const decompressFiles = async (zipFile, file) => {
-  // create threads for reading, unpacking and writing
   const read = createReadStream(zipFile);
-  const brotli = createBrotliDecompress(); // Brotli-decompressor
+  const brotli = createBrotliDecompress();
   const write = createWriteStream(file);
 
-  // Using pipeline to handle threads and errors
+  // checking the input file to see if it is an archive
+  let decompressedSuccessfully = false;
+  brotli.on('data', () => {
+    decompressedSuccessfully = true;  // If compressed information is sent - an archive file
+  });
+
   pipeline(read, brotli, write, (err) => {
-    if (err) {
+    if (err || !decompressedSuccessfully) {
+      console.error(`*** Decompress operation failed. The file ${zipFile} is not a valid Brotli archive.`);
       process.exitCode = 1;
-      throw new Error(`*** Decompress operation failed. Error: ${err.message}`);
+      write.end();
+      process.stdout.write(EOL + ">");
+
     } else {
-      process.stdout.write(EOL + `*** File: ${zipFile}`);
       process.stdout.write(EOL + `*** File ${zipFile} has been decompressed to ${file}` + EOL + ">");
     }
   });
@@ -29,14 +33,14 @@ export const decompress = async (nameZipFile, pathDestFile) => {
   const pathZipFile = getPath(nameZipFile);
   let isFileExists = await checkFile(pathZipFile);
   if (!isFileExists) {
-    throw new Error(`*** FS operation failed. Not a such file : ${pathZipFile}`);
+    throw new Error(`*** FS operation failed. No such file : ${pathZipFile}`);
   }
 
   const pathUnzipFile = getPath(pathDestFile);
   isFileExists = await checkFile(dirname(pathUnzipFile));
   if (!isFileExists) {
-    throw new Error(`*** FS operation failed. Not a such directory : ${dirname(pathUnzipFile)}`);
+    throw new Error(`*** FS operation failed. No such directory: ${dirname(pathUnzipFile)}`);
   }
+
   await decompressFiles(pathZipFile, pathUnzipFile).catch((err) => console.error(err.message));
 };
-

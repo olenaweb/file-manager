@@ -1,22 +1,23 @@
 import { EOL } from "os";
 import { Transform } from "stream";
-import { env, cwd } from "process";
+import { env, cwd, exit } from "process";
 import { up, rm, cd, ls, cat, add, rn, cp, mv } from "./fsCommands.js";
 import systemInfo from "./systemInfo.js";
 import { calculateHash } from "./hash.js";
 import { compress } from "./compressBrotli.js";
 import { decompress } from "./decompressBrotli.js";
 
+
 const commandMan = new Transform({
   async transform(chunk, encoding, callback) {
     const [command, ...args] = chunk.toString().replace(EOL, "").split(" ");
     // console.log('args = ', args);
-    // console.log('command = ', command);
+    // console.log('Yours command = ', command);
     try {
       switch (command) {
         case ".exit":
           console.log(`${EOL}Thank you for using File Manager , ${env.username} , goodby!`);
-          break;
+          exit();
         case "up":
           up();
           break;
@@ -50,6 +51,7 @@ const commandMan = new Transform({
         case "mv":
           await mv(...args);
           break;
+
         case "hash":
           await calculateHash(...args);
           break;
@@ -65,12 +67,10 @@ const commandMan = new Transform({
           );
       }
     } catch (err) {
-      console.log(err.message);
+      console.log("Operation failed: " + err.message);
     }
 
-    console.log(`${EOL}You are currently in ${cwd()}`);
-    process.stdout.write(EOL + "> ");
-
+    console.log(`${EOL}You are currently in ${cwd()}.`);
     callback();
   },
 });

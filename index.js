@@ -1,4 +1,4 @@
-import commandMan from "./operations.js";
+import commandMan from "./modules/operations.js";
 import { EOL, homedir } from "os";
 import { argv, chdir, cwd, exit } from "process";
 let username;

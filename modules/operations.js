@@ -1,11 +1,11 @@
 import { EOL } from "os";
 import { Transform } from "stream";
 import { env, cwd } from "process";
-import { up, rm, cd, ls, cat, add, rn, cp, mv } from "./modules/fsCommands.js";
-import systemInfo from "./modules/systemInfo.js";
-import { calculateHash } from "./modules/hash.js";
-import { compress } from "./modules/compressBrotli.js";
-import { decompress } from "./modules/decompressBrotli.js";
+import { up, rm, cd, ls, cat, add, rn, cp, mv } from "./fsCommands.js";
+import systemInfo from "./systemInfo.js";
+import { calculateHash } from "./hash.js";
+import { compress } from "./compressBrotli.js";
+import { decompress } from "./decompressBrotli.js";
 
 const commandMan = new Transform({
   async transform(chunk, encoding, callback) {

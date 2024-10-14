@@ -1,50 +1,42 @@
-import { access } from 'node:fs/promises';
 import { createReadStream, createWriteStream } from 'fs';
-import { createBrotliDecompress } from 'node:zlib'; // Используем Brotli для распаковки
+import { createBrotliDecompress } from 'node:zlib'; // use Brotli
 import { pipeline } from 'node:stream';
-import { dirname, join, basename } from 'path';
-import { fileURLToPath } from 'url';
+import { dirname, basename } from 'path';
+import { EOL } from "os";
+import { checkFile, getPath } from "./utils.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
-// Функция для проверки наличия файла
-const checkFile = async (file) => {
-  try {
-    await access(file);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-// Функция для распаковки файлов
-const decompressFiles = async (file, zipFile) => {
-  const isFileExists = await checkFile(zipFile);
-  if (!isFileExists) {
-    throw new Error(`*** Decompress operation failed. No such file: ${zipFile}`);
-  }
-
-  // Создаем потоки для чтения, распаковки и записи
+// Function for unpacking files
+const decompressFiles = async (zipFile, file) => {
+  // create threads for reading, unpacking and writing
   const read = createReadStream(zipFile);
-  const brotli = createBrotliDecompress(); // Brotli-декомпрессор
+  const brotli = createBrotliDecompress(); // Brotli-decompressor
   const write = createWriteStream(file);
 
-  // Используем pipeline для обработки потоков и ошибок
+  // Using pipeline to handle threads and errors
   pipeline(read, brotli, write, (err) => {
     if (err) {
       process.exitCode = 1;
       throw new Error(`*** Decompress operation failed. Error: ${err.message}`);
     } else {
-      console.log(`*** File ${basename(zipFile)} has been decompressed to ${basename(file)}`);
+      process.stdout.write(EOL + `*** File: ${zipFile}`);
+      process.stdout.write(EOL + `*** File ${zipFile} has been decompressed to ${file}` + EOL + ">");
     }
   });
 };
 
-// Основная функция для запуска распаковки
-export const decompress = async () => {
-  const file = join(__dirname, 'files', 'fileToCompress.txt');  // Результирующий файл
-  const zipFile = join(__dirname, 'files', 'archive.br');       // Сжатый файл с расширением .br
-  await decompressFiles(file, zipFile).catch((err) => console.error(err.message));
+export const decompress = async (nameZipFile, pathDestFile) => {
+  const pathZipFile = getPath(nameZipFile);
+  let isFileExists = await checkFile(pathZipFile);
+  if (!isFileExists) {
+    throw new Error(`*** FS operation failed. Not a such file : ${pathZipFile}`);
+  }
+
+  const pathUnzipFile = getPath(pathDestFile);
+  isFileExists = await checkFile(dirname(pathUnzipFile));
+  if (!isFileExists) {
+    throw new Error(`*** FS operation failed. Not a such directory : ${dirname(pathUnzipFile)}`);
+  }
+  await decompressFiles(pathZipFile, pathUnzipFile).catch((err) => console.error(err.message));
 };
 

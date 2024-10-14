@@ -4,12 +4,14 @@ import { env, cwd } from "process";
 import { up, rm, cd, ls, cat, add, rn, cp, mv } from "./modules/fsCommands.js";
 import systemInfo from "./modules/systemInfo.js";
 import { calculateHash } from "./modules/hash.js";
+import { compress } from "./modules/compressBrotli.js";
+import { decompress } from "./modules/decompressBrotli.js";
 
 const commandMan = new Transform({
   async transform(chunk, encoding, callback) {
     const [command, ...args] = chunk.toString().replace(EOL, "").split(" ");
     // console.log('args = ', args);
-    // console.log('Yours command = ', command);
+    // console.log('command = ', command);
     try {
       switch (command) {
         case ".exit":
@@ -48,16 +50,15 @@ const commandMan = new Transform({
         case "mv":
           await mv(...args);
           break;
-
         case "hash":
           await calculateHash(...args);
           break;
         case "compress":
           await compress(...args);
           break;
-        // case "decompress":
-        //   await decompress(...args);
-        //   break;
+        case "decompress":
+          await decompress(...args);
+          break;
         default:
           throw new Error(
             `${EOL} Invalid input: wrong command: ${command}`

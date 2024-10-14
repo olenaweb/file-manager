@@ -1,10 +1,9 @@
 import { chdir, cwd } from "process";
 import { parse, basename, dirname, join } from "path";
 import { lstat, rename, unlink, writeFile, access, constants, readdir } from "node:fs/promises";
-import { appendFile, createReadStream, createWriteStream } from "fs";
+import { createReadStream, createWriteStream } from "fs";
 import { EOL } from "os";
 import { checkFile, getPath } from "./utils.js";
-
 
 // import { lstat } from "fs/promises";
 
@@ -15,6 +14,7 @@ export const up = () => {
   }
   chdir("../");
 };
+
 // RM
 export const rm = async (file) => {
   const pathFile = getPath(file);
@@ -30,6 +30,7 @@ export const rm = async (file) => {
     throw new Error(`*** FS operation failed with ${pathFile} ` + err.message);
   }
 };
+
 // CD
 export const cd = async (dir) => {
   if (!dir) {
@@ -39,7 +40,6 @@ export const cd = async (dir) => {
 
   try {
     chdir(dir);
-    await lstat(cwd());
   } catch (err) {
     chdir(currDir);
     throw new Error(`*** FS operation failed. Not a such directory: ${dir}`);

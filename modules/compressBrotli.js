@@ -1,50 +1,46 @@
-import { access } from 'node:fs/promises';
 import { createReadStream, createWriteStream } from 'node:fs';
-import { createBrotliCompress } from 'node:zlib'; // Используем Brotli
+import { createBrotliCompress } from 'node:zlib'; // use Brotli
 import { pipeline } from 'node:stream';
-import { dirname, join, basename } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { dirname, extname } from 'node:path';
+import { EOL } from "os";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { checkFile, getPath } from "./utils.js";
 
-// Проверяем наличие файла
-const checkFile = async (file) => {
-  try {
-    await access(file);
-    return true;
-  } catch {
-    return false;
-  }
-};
 
 const compressFiles = async (file, zipFile) => {
-  // Проверяем, существует ли файл
-  const isFileExists = await checkFile(file);
-  if (!isFileExists) {
-    throw new Error(`*** Compress operation failed. No such file: ${file}`);
-  }
-
-  // Создаем потоки для чтения, сжатия и записи
+  // create streams for reading, compression and writing
   const read = createReadStream(file);
-  const brotli = createBrotliCompress(); // Brotli-компрессор
+  const brotli = createBrotliCompress(); // Brotli compressor
   const write = createWriteStream(zipFile);
 
-  // Используем pipeline для связывания потоков
+  // Using pipeline to link threads
   pipeline(read, brotli, write, (err) => {
     if (err) {
       process.exitCode = 1;
       throw new Error(`*** Compress operation failed. Error: ${err.message}`);
     } else {
-      console.log(`*** File ${basename(file)} has been compressed to ${basename(zipFile)}`);
+      process.stdout.write(EOL + `*** File: ${file}`);
+      process.stdout.write(EOL + `*** File ${file} has been compressed to ${zipFile}` + EOL + ">");
     }
   });
 };
 
-const compress = async (file) => {
-  const file = join(__dirname, 'files', 'fileToCompress.txt');  // Исходный файл
-  const zipFile = join(__dirname, 'files', 'archive.br');       // Результат сжатия с расширением .br
-  await compressFiles(file, zipFile).catch((err) => console.error(err.message));
+export const compress = async (file, zipFile) => {
+  const pathFile = getPath(file);
+  let isFileExists = await checkFile(pathFile);
+  if (!isFileExists) {
+    throw new Error(`*** FS operation failed. Not a such file : ${pathFile}`);
+  }
+
+  const pathZipFile = getPath(zipFile);
+  isFileExists = await checkFile(dirname(pathZipFile));
+  if (!isFileExists) {
+    throw new Error(`*** FS operation failed. Not a such directory : ${dirname(pathZipFile)}`);
+  }
+
+  const extnameZipFile = extname(pathZipFile);
+  const nameZipFile = extnameZipFile ? pathZipFile : pathZipFile + '.br';
+
+  await compressFiles(pathFile, nameZipFile).catch((err) => console.error(err.message));
 };
 
-await compress(file);

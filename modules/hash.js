@@ -13,8 +13,9 @@ const calculateHashFile = async (file) => {
 
   stream.on('end', () => {
     const hexHash = hash.digest('hex'); // hash in hex format
-    process.stdout.write(EOL + `> File: ${file}`);
-    process.stdout.write(EOL + `> SHA256 Hash: ${hexHash}` + EOL + ">");
+    process.stdout.write(EOL + `File: ${file}`);
+    // process.stdout.write(EOL + `> SHA256 Hash: ${hexHash}` + EOL + ">");
+    process.stdout.write(EOL + `SHA256 Hash: ${hexHash}` + EOL);
   });
 
   stream.on('error', (error) => {

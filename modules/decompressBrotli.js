@@ -21,10 +21,12 @@ const decompressFiles = async (zipFile, file) => {
       console.error(`*** Decompress operation failed. The file ${zipFile} is not a valid Brotli archive.`);
       process.exitCode = 1;
       write.end();
-      process.stdout.write(EOL + ">");
+      // process.stdout.write(EOL + ">");
+      process.stdout.write(EOL);
 
     } else {
-      process.stdout.write(EOL + `*** File ${zipFile} has been decompressed to ${file}` + EOL + ">");
+      // process.stdout.write(EOL + `*** File ${zipFile} has been decompressed to ${file}` + EOL + ">");
+      process.stdout.write(EOL + `*** File ${zipFile} has been decompressed to ${file}` + EOL);
     }
   });
 };

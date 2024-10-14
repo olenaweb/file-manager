@@ -20,7 +20,8 @@ const compressFiles = async (file, zipFile) => {
       throw new Error(`*** Compress operation failed. Error: ${err.message}`);
     } else {
       process.stdout.write(EOL + `*** File: ${file}`);
-      process.stdout.write(EOL + `*** File ${file} has been compressed to ${zipFile}` + EOL + ">");
+      // process.stdout.write(EOL + `*** File ${file} has been compressed to ${zipFile}` + EOL + ">");
+      process.stdout.write(EOL + `*** File ${file} has been compressed to ${zipFile}` + EOL);
     }
   });
 };

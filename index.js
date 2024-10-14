@@ -17,7 +17,7 @@ chdir(homedir());
 
 console.log(EOL + `Welcome to the File Manager, ${username}!` + EOL);
 console.log(`***You are currently in ${cwd()}...`);
-process.stdout.write(EOL + "> ");
+// process.stdout.write(EOL + "> ");
 process.stdin.pipe(commandMan).pipe(process.stdout);
 
 ["SIGINT", "close"].forEach((item) => {

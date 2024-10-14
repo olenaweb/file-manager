@@ -93,7 +93,8 @@ export const cat = async (file) => {
 
   const readStream = createReadStream(getPath(pathFile), 'utf-8');
   readStream.on('data', (data) => {
-    process.stdout.write(data + EOL + "> end of file, input next command" + EOL + ">");
+    // process.stdout.write(data + EOL + "> end of file, input next command" + EOL + ">");
+    process.stdout.write(data + EOL + "End of file, input next command" + EOL);
   })
 
   readStream.on("error", (err) => console.log('*** FS operation failed. ' + err.message));
@@ -175,7 +176,8 @@ export const cp = async (file1, dir2) => {
     });
 
     writeStream.on('finish', () => {
-      process.stdout.write(EOL + `File ${sourceFile} copied to ${targetFile}` + EOL + "> ");
+      // process.stdout.write(EOL + `File ${sourceFile} copied to ${targetFile}` + EOL + "> ");
+      process.stdout.write(EOL + `File ${sourceFile} copied to ${targetFile}` + EOL);
     });
   }
   catch (err) {
@@ -217,7 +219,8 @@ export const mv = async (file1, dir2) => {
 
     // waiting for the recording to complete and writeStream to close
     writeStream.on('close', async () => {
-      process.stdout.write(EOL + `File ${sourceFile} moved to ${targetFile}` + EOL + "> ");
+      // process.stdout.write(EOL + `File ${sourceFile} moved to ${targetFile}` + EOL + "> ");
+      process.stdout.write(EOL + `File ${sourceFile} moved to ${targetFile}` + EOL);
       // Deleting the original file
       try {
         await unlink(sourceFile);

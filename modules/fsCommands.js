@@ -1,11 +1,10 @@
 import { chdir, cwd } from "process";
 import { parse, basename, dirname, join } from "path";
-import { lstat, rename, unlink, writeFile, access, constants, readdir } from "node:fs/promises";
+import { rename, unlink, writeFile, access, constants, readdir, mkdir } from "node:fs/promises";
 import { createReadStream, createWriteStream } from "fs";
 import { EOL } from "os";
 import { checkFile, getPath } from "./utils.js";
 
-// import { lstat } from "fs/promises";
 
 // UP
 export const up = () => {
@@ -119,6 +118,22 @@ export const add = async (file) => {
   }
 };
 
+// MKDIR
+export const createDir = async (dirName) => {
+  const pathDir = getPath(dirName);
+  let isDirExists = await checkFile(pathDir);
+  if (isDirExists) {
+    throw new Error(`*** FS operation failed. This directory ${pathDir} already exists`);
+  }
+
+  try {
+    await mkdir(pathDir, { recursive: true });
+    console.log(`Directory ${pathDir} has been created`);
+  } catch (e) {
+    throw new Error('*** FS operation failed. ' + e.message);
+  }
+};
+
 // RN
 // rn path_to_file new_filename
 export const rn = async (file1, file2) => {
@@ -219,7 +234,6 @@ export const mv = async (file1, dir2) => {
 
     // waiting for the recording to complete and writeStream to close
     writeStream.on('close', async () => {
-      // process.stdout.write(EOL + `File ${sourceFile} moved to ${targetFile}` + EOL + "> ");
       process.stdout.write(EOL + `File ${sourceFile} moved to ${targetFile}` + EOL);
       // Deleting the original file
       try {

@@ -1,14 +1,14 @@
 import { EOL } from "os";
 import { Transform } from "stream";
 import { env, cwd, exit } from "process";
-import { up, rm, cd, ls, cat, add, rn, cp, mv } from "./fsCommands.js";
+import { up, rm, cd, ls, cat, add, rn, cp, mv, createDir } from "./fsCommands.js";
 import systemInfo from "./systemInfo.js";
 import { calculateHash } from "./hash.js";
 import { compress } from "./compressBrotli.js";
 import { decompress } from "./decompressBrotli.js";
 
 
-const commandMan = new Transform({
+const createCommandManager = (username) => new Transform({
   async transform(chunk, encoding, callback) {
     const [command, ...args] = chunk.toString().replace(EOL, "").split(" ");
     // console.log('args = ', args);
@@ -16,7 +16,7 @@ const commandMan = new Transform({
     try {
       switch (command) {
         case ".exit":
-          console.log(`${EOL}Thank you for using File Manager , ${env.username} , goodby!`);
+          console.log(`${EOL}Thank you for using File Manager, ${username}, goodbye!`);
           exit();
         case "up":
           up();
@@ -42,6 +42,9 @@ const commandMan = new Transform({
         case "add":
           await add(...args);
           break;
+        case "mkdir":
+          await createDir(...args);
+          break;
         case "rn":
           await rn(...args);
           break;
@@ -62,9 +65,7 @@ const commandMan = new Transform({
           await decompress(...args);
           break;
         default:
-          throw new Error(
-            `${EOL} Invalid input: wrong command: ${command}`
-          );
+          throw new Error("Invalid input");
       }
     } catch (err) {
       console.log("Operation failed: " + err.message);
@@ -75,4 +76,4 @@ const commandMan = new Transform({
   },
 });
 
-export default commandMan;
+export default createCommandManager;

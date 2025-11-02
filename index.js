@@ -1,28 +1,25 @@
-import commandMan from "./modules/operations.js";
+import createCommandManager from "./modules/operations.js";
 import { EOL, homedir } from "os";
 import { argv, chdir, cwd, exit } from "process";
-let username;
-try {
-  if (argv.length >= 3) {
-    username = argv.find((item) => item.includes("--username")).split("=")[1];
-  }
-  if (!username || username === undefined) {
-    username = 'user';
-  }
-} catch (err) {
-  console.log(err.message);
+let username = 'Anonymous';
+// Парсим аргументы командной строки
+const args = process.argv.slice(2); // убираем 'node' и путь к файлу
+const usernameArg = args.find(arg => arg.startsWith('--username='));
+if (usernameArg) {
+  username = usernameArg.split('=')[1];
 }
 
 chdir(homedir());
 
 console.log(EOL + `Welcome to the File Manager, ${username}!` + EOL);
-console.log(`***You are currently in ${cwd()}...`);
-// process.stdout.write(EOL + "> ");
+console.log(`You are currently in ${cwd()}`);
+
+const commandMan = createCommandManager(username);
 process.stdin.pipe(commandMan).pipe(process.stdout);
 
 ["SIGINT", "close"].forEach((item) => {
   process.on(item, () => {
-    console.log(`${EOL}Thank you for using File Manager, ${username} , goodby!`);
+    console.log(`${EOL}Thank you for using File Manager, ${username}, goodbye!`);
     exit();
   })
 })

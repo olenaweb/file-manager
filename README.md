@@ -23,6 +23,8 @@
 
  ls directory
 
+ mkdir new_directory_name , example: mkdir subdir 
+
  cat path_to_file
 
  add new_file_name
@@ -58,7 +60,7 @@
  ##### Compress and decompress operations
  ##### path_to_destination - path and name of file
 
- compress path_to_file path_to_destination
+ compress path_to_file path_to_destination , example: compress check1.txt subdir/check1.br 
 
- decompress path_to_file path_to_destination
+ decompress path_to_file path_to_destination , example: decompress subdir/check1.br check2.txt 
 

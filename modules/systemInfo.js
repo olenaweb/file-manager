@@ -8,8 +8,11 @@ const systemInfo = (repl) => {
       break;
     case "--cpus":
       const processor = cpus();
-      // const processor = cores.cpus();
-      console.log(`${EOL} ${processor.length} - ${processor[0].model}`);
+      console.log(`${EOL}Overall amount of CPUS: ${processor.length}`);
+      processor.forEach((cpu, index) => {
+        const clockRateGHz = (cpu.speed / 1000).toFixed(2);
+        console.log(`CPU ${index + 1}: ${cpu.model} - ${clockRateGHz} GHz`);
+      });
       break;
     case "--homedir":
       console.log(`${EOL}`, homedir());

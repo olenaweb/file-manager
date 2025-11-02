@@ -92,7 +92,6 @@ export const cat = async (file) => {
 
   const readStream = createReadStream(getPath(pathFile), 'utf-8');
   readStream.on('data', (data) => {
-    // process.stdout.write(data + EOL + "> end of file, input next command" + EOL + ">");
     process.stdout.write(data + EOL + "End of file, input next command" + EOL);
   })
 
@@ -191,7 +190,6 @@ export const cp = async (file1, dir2) => {
     });
 
     writeStream.on('finish', () => {
-      // process.stdout.write(EOL + `File ${sourceFile} copied to ${targetFile}` + EOL + "> ");
       process.stdout.write(EOL + `File ${sourceFile} copied to ${targetFile}` + EOL);
     });
   }

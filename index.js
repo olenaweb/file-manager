@@ -2,8 +2,7 @@ import createCommandManager from "./modules/operations.js";
 import { EOL, homedir } from "os";
 import { argv, chdir, cwd, exit } from "process";
 let username = 'Anonymous';
-// Парсим аргументы командной строки
-const args = process.argv.slice(2); // убираем 'node' и путь к файлу
+const args = argv.slice(2);
 const usernameArg = args.find(arg => arg.startsWith('--username='));
 if (usernameArg) {
   username = usernameArg.split('=')[1];

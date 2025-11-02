@@ -1,5 +1,4 @@
 import { userInfo, arch, cpus, EOL, homedir, } from "os";
-// import cores from "os";
 
 const systemInfo = (repl) => {
   switch (repl) {

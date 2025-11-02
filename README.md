@@ -1,4 +1,69 @@
-# file-manager
+# File-manager
  Task is to implement File Manager using Node.js APIs.
  
- npm run start -- --username=your_username
+ ##### For PowerShell (Windows):
+ npm run start -- -- --username=YourName 
+
+ ##### For Bash or CMD:
+ npm run start -- --username=YourName
+
+ ##### Alternative (works everywhere):
+ node index.js --username=YourName  
+
+##### LOOK at branch develop!!!!!
+
+#### Commands:
+
+ .exit  or Ctrl-C
+
+ ##### Navigation & working directory
+
+ up
+
+ rm path_to_file
+
+ cd path_to_directory
+
+ ls directory
+
+ mkdir new_directory_name , example: mkdir subdir 
+
+ cat path_to_file
+
+ add new_file_name
+
+ rn path_to_file new_filename
+
+ ##### path_to_new_directory - only directory
+
+ cp path_to_file path_to_new_directory 
+
+ mv path_to_file path_to_new_directory 
+
+ ##### os commands : 
+
+ os --EOL
+
+ os --cpus
+
+ os --homedir
+
+ os --username
+
+ os --architecture
+
+ or 
+
+ os --cpus --homedir --username --architecture --EOL
+ 
+ ##### Hash calculation
+ 
+ hash path_to_file
+
+ ##### Compress and decompress operations
+ ##### path_to_destination - path and name of file
+
+ compress path_to_file path_to_destination , example: compress check1.txt subdir/check1.br 
+
+ decompress path_to_file path_to_destination , example: decompress subdir/check1.br check2.txt 
+

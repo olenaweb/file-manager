@@ -11,13 +11,12 @@ import { decompress } from "./decompressBrotli.js";
 const createCommandManager = (username) => new Transform({
   async transform(chunk, encoding, callback) {
     const [command, ...args] = chunk.toString().replace(EOL, "").split(" ");
-    // console.log('args = ', args);
-    // console.log('Yours command = ', command);
     try {
       switch (command) {
         case ".exit":
           console.log(`${EOL}Thank you for using File Manager, ${username}, goodbye!`);
           exit();
+          break;
         case "up":
           up();
           break;

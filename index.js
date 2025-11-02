@@ -1,6 +1,7 @@
 import createCommandManager from "./modules/operations.js";
 import { EOL, homedir } from "os";
 import { argv, chdir, cwd, exit } from "process";
+
 let username = 'Anonymous';
 const args = argv.slice(2);
 const usernameArg = args.find(arg => arg.startsWith('--username='));
